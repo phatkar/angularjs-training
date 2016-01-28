@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <link rel="stylesheet" type="text/css" href="../styles/main.css">
+      <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+      <link href='https://fonts.googleapis.com/css?family=Merriweather:400,700' rel='stylesheet' type='text/css'>
+    </head>
+
+    <body class="exp-mgr-wrapper" ng-app="expMgrApp">
+
+      <div ng-controller="expMgrCtrl" class="container main">
+        <div class="logo">
+            <h3 class="logo-name"><img src="../resource/logo2.png" class="img-responsive logo-img"/> Expense Manager</h3>
+        </div>
+        <hr class="hr-line">
+        <div class="header">
+            <div class="btn-container">
+              <input type="button" class="btn-default" value="Show Income" ng-click="showContent = 'income'"/>
+              <input type="button" class="btn-default" value="Show Expense" ng-click="showContent = 'expense'"/>
+            </div>
+            <div class="nav-container">
+              <input type="button" class="btn-primary" value="Add New" ng-click="showForm = true"/>
+            </div>
+        </div>
+
+        <div class="container">
+
+            <div ng-show="showContent === 'expense'">
+                <div class="new-entry" ng-show="showForm">
+                  <div class="panel panel-default">
+                      <div class="panel-heading">Expense Details</div>
+                      <div class="panel-body">
+                          <form class="form" name="xmAddExp" role="form" ng-submit="addNewRecord('expense')" novalidate>
+                              <div class="form-group">
+                                  <label for="fname">Expense Type:</label>
+                                  <select ng-hide="editingData" class="form-control" ng-model="defaultExpCat" ng-options="item.name for item in expCat track by item.id"></select>
+                                  <select ng-show="editingData" class="form-control" ng-model="selectedExpCat" ng-options="item.name for item in expCat track by item.id"></select>
+                              </div>
+                              <div class="form-group">
+                                  <label for="lname">Amount:</label>{{}}
+                                  <input ng-hide="editingData" type="text" class="form-control" name="amount" ng-model="expAmount" placeholder="Expense Amount" required>
+                                  <input ng-show="editingData" type="text" class="form-control" name="amount" ng-model="editExpAmount" required>
+                              </div>
+                              <div class="form-group">
+                                  <label for="email">Date:</label>
+                                  <input ng-hide="editingData" type="text" class="form-control" ng-model="expDate" required>
+                                  <input ng-show="editingData" type="text" class="form-control" ng-model="editExpDate" required>
+                              </div>
+                              <div class="form-group">
+                                  <label for="age">Mode</label>
+                                  <select ng-hide="editingData" class="form-control" ng-model="defaultMode" ng-options="item.name for item in mode track by item.id"></select>
+                                  <select ng-show="editingData" class="form-control" ng-model="selectedExpMode" ng-options="item.name for item in mode track by item.id"></select>
+                              </div>
+                              <button type="submit" ng-hide="editingData" class="btn-primary"><span class="glyphicon glyphicon-save"></span> Submit</button>
+                              <button type="submit" ng-show="editingData" class="btn-primary" ng-click="updateRecord()"><span class="glyphicon glyphicon-save"></span> Update</button>
+                              <button type="reset" class="btn-primary" ng-click="showForm = false"><span class="glyphicon glyphicon-remove"></span> Close</button>
+                          </form>
+                      </div>
+                  </div>
+                </div>
+
+                <div class="list-container">
+                    <div ng-show="expSuccess" class="alert alert-success fade in">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        <strong>Success!</strong> Expense Updated successfully.
+                    </div>
+                    <h3>Total Expense - <span class="badge" ng-bind="expCount"></span></h3>
+                    <table id="expense-table" class="table table-hover table-striped table-bordered">
+                        <thead class="table-header">
+                          <tr>
+                              <th>Expense</th>
+                              <th>Amount</th>
+                              <th>Date</th>
+                              <th>Mode</th>
+                              <th class="action-button">&nbsp;</th>
+                              <th class="action-button">&nbsp;</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr ng-repeat="item in expenses">
+                              <td>
+                                  <div ng-hide="editingData[item.exp_id]">{{item.exp_cat}}</div>
+                              </td>
+                              <td>
+                                  <div ng-hide="editingData[item.exp_id]">{{item.exp_amount}}</div>
+                              </td>
+                              <td>
+                                  <div ng-hide="editingData[item.exp_id]">{{item.exp_date}}</div>
+                              <td>
+                                  <div ng-hide="editingData[item.exp_id]">{{item.mode}}</div>
+                              </td>
+                              <td class="action-button">
+                                  <button type="submit" class="btn-info" ng-click="modifyExp(item, $index)"><span class="glyphicon glyphicon-pencil"></span> Modify</button>
+                              </td>
+                              <td class="action-button">
+                                  <button type="submit" class="btn-danger" ng-click="removeExpRecord($index)"><span class="glyphicon glyphicon-trash"></span> Delete</button>
+                              </td>
+                          </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div ng-show="showContent === 'income'">
+
+                <div class="new-entry" ng-show="showForm">
+                  <div class="panel panel-default">
+                      <div class="panel-heading">Income Details</div>
+                      <div class="panel-body">
+                      <form class="form" name="xmAddInc" role="form" ng-submit="addNewRecord('income')" novalidate>
+                          <div class="form-group">
+                            <label for="fname">Income Type:</label>
+                            <select class="form-control" ng-hide="editingData" ng-model="defaultIncCat" ng-options="item.name for item in incCat track by item.id"></select>
+                            <select class="form-control" ng-show="editingData" ng-model="selectedIncCat" ng-options="item.name for item in incCat track by item.id"></select>
+                          </div>
+                          <div class="form-group">
+                            <label for="lname">Amount:</label>
+                            <input type="text" ng-hide="editingData" class="form-control" ng-model="incAmount" required>
+                            <input type="text" ng-show="editingData" class="form-control" ng-model="editIncAmount" required>
+                          </div>
+                          <div class="form-group">
+                            <label for="email">Date:</label>
+                            <input type="text" ng-hide="editingData" class="form-control" ng-model="incDate" required>
+                            <input type="text" ng-show="editingData" class="form-control" ng-model="editIncDate" required>
+                          </div>
+                          <div class="form-group">
+                            <label for="age">Mode</label>
+                            <select class="form-control" ng-hide="editingData" ng-model="defaultMode" ng-options="item.name for item in mode track by item.id"></select>
+                            <select class="form-control" ng-show="editingData" ng-model="selectedIncMode" ng-options="item.name for item in mode track by item.id"></select>
+                          </div>
+                          <button type="submit" ng-hide="editingData" class="btn-primary"><span class="glyphicon glyphicon-save"></span> Submit</button>
+                          <button type="submit" ng-show="editingData" class="btn-primary" ng-click="updateRecord()"><span class="glyphicon glyphicon-save"></span> Update</button>
+                          <button type="reset" class="btn-primary" ng-click="showForm = false"><span class="glyphicon glyphicon-remove"></span> Close</button>
+                      </form>
+                      </div>
+                  </div>
+                </div>
+
+                <div class="list-container">
+                    <div ng-show="incSuccess" class="alert alert-success fade in">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        <strong>Success!</strong> Income Updated successfully.
+                    </div>
+                    <button class="btn btn-primary" type="button">
+                        Total Income <span class="badge" ng-bind="incCount"></span>
+                    </button>
+                    <table id="income-table" class="table table-hover table-striped table-bordered">
+                        <thead class="table-header">
+                          <tr>
+                              <th>Income Type</th>
+                              <th>Amount</th>
+                              <th>Date</th>
+                              <th>Mode</th>
+                              <th class="action-button">&nbsp;</th>
+                              <th class="action-button">&nbsp;</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr ng-repeat="item in income">
+                              <td>{{item.inc_cat}}</td>
+                              <td>{{item.inc_amount}}</td>
+                              <td>{{item.inc_date}}</td>
+                              <td>{{item.mode}}</td>
+                              <td class="action-button">
+                                  <button type="submit" class="btn-info" ng-click="modifyInc(item, $index)"><span class="glyphicon glyphicon-pencil"></span> Modify</button>
+                              </td>
+                              <td class="action-button">
+                                  <button type="submit" class="btn-danger" ng-click="removeIncRecord($index)"><span class="glyphicon glyphicon-trash"></span> Delete</button>
+                              </td>
+                          </tr>
+                        </tbody>
+                    </table>
+                </div>
+          </div>
+
+        </div>
+
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.20/angular.min.js"></script>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.20/angular-route.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+				<script type="text/javascript" src="../scripts/main.js"></script>
+		</body>
+
+</html>

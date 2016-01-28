@@ -1,0 +1,56 @@
+.exp-mgr-wrapper {
+	padding: 10px;
+}
+.exp-mgr-wrapper .main .container {
+	margin-top: 10px;
+	padding-left: 0px;
+}
+.hr-line {
+	border: 0;
+  height: 1px;
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+}
+.logo .logo-name {
+	margin: 0 0 20px 0;
+}
+.logo .logo-img {
+	display: inline-block;
+	vertical-align: bottom;
+}
+.logo {
+	color: #29292C;
+}
+.hidden {
+	display: none;
+}
+.btn-container {
+	float: right;
+}
+.new-entry {
+	float: left;
+	width: 50%;
+}
+.center-align {
+	margin: auto;
+	display: block;
+}
+.action-button {
+	width: 100px;
+}
+.list-container {
+	float: left;
+	width: 100%;
+}
+.list-container .table .edit-row {
+	padding: 2px 12px;
+	height: 25px;
+}
+.list-container .badge {
+	font-size: 14px;
+	font-weight: normal;
+	background-color: #31708f;
+}
+.table-header {
+	background-color: #2c3254;
+	color: whitesmoke;
+}
