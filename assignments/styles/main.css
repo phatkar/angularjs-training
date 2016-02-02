@@ -1,5 +1,10 @@
+@font-face {
+    font-family: baseFont;
+    src: url('../resource/fonts/sansation_light.woff');
+}
 .exp-mgr-wrapper {
 	padding: 10px;
+	background-image: url('../resource/pngs/satinweave.png');
 }
 .exp-mgr-wrapper .main .container {
 	margin-top: 10px;
@@ -18,7 +23,18 @@
 	vertical-align: bottom;
 }
 .logo {
-	color: #29292C;
+	color: #31708F;
+	font-family: initial;
+}
+.header .btn-nav {
+	color: #eee;
+	background-color: #333;
+	border-color: #333;
+}
+input.btn-default.btn-nav:hover {
+    background-color: #49A3CF;
+    color: white;
+    border-color: #49A3CF;
 }
 .hidden {
 	display: none;
@@ -53,4 +69,16 @@
 .table-header {
 	background-color: #2c3254;
 	color: whitesmoke;
+}
+.error-msg {
+	margin: 3px 0 0 5px;
+	color: red;
+}
+.no-resize {
+	resize: none;
+}
+#income-table, #expense-table {
+	box-shadow: 8px 9px 10px #888888;
+	margin-top: 20px;
+	background-color: #eee;
 }

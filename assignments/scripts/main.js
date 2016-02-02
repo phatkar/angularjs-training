@@ -1,4 +1,4 @@
-var expMgrModule = angular.module('expMgrApp', []);
+var expMgrModule = angular.module('expMgrApp', ['ngMessages']);
 
 expMgrModule.controller('expMgrCtrl', function($scope) {
 
@@ -8,10 +8,10 @@ expMgrModule.controller('expMgrCtrl', function($scope) {
 		$scope.showContent = 'expense';
 
 		$scope.expenses = [
-				{exp_id: 1, exp_cat: 'Rent', exp_amount: '5000', exp_date: '02/01/2016', mode: 'Cash'},
-				{exp_id: 2, exp_cat: 'Party', exp_amount: '2000', exp_date: '10/01/2016', mode: 'Card'},
-				{exp_id: 3, exp_cat: 'Shopping', exp_amount: '900', exp_date: '03/01/2016', mode: 'Electronic Transfer'},
-				{exp_id: 4, exp_cat: 'Gift', exp_amount: '500', exp_date: '12/01/2016', mode: 'Cash'}
+				{exp_id: 1, exp_cat: 'Rent', exp_amount: '5000', exp_date: '02/01/2016', mode: 'Cash', note: 'Rent given.'},
+				{exp_id: 2, exp_cat: 'Party', exp_amount: '2000', exp_date: '10/01/2016', mode: 'Card', note: 'Team win.'},
+				{exp_id: 3, exp_cat: 'Shopping', exp_amount: '900', exp_date: '03/01/2016', mode: 'Electronic Transfer', note: 'Khup kharcha'},
+				{exp_id: 4, exp_cat: 'Gift', exp_amount: '500', exp_date: '12/01/2016', mode: 'Cash', note: 'Gift for birthday. Gift for birthday.'}
 		];
 
 		$scope.income = [
@@ -43,37 +43,48 @@ expMgrModule.controller('expMgrCtrl', function($scope) {
 		$scope.defaultMode = {id: 2, name: 'Cash'};
 
 		function getExpCount() {
-				$scope.expCount = 0;
+				var expTotal = 0;
 				angular.forEach($scope.expenses, function(item) {
-						$scope.expCount = $scope.expCount + parseInt(item.exp_amount, 10);
+						expTotal = expTotal + parseFloat(item.exp_amount);
 				});
+				$scope.expCount = expTotal.toFixed(2);
 		};
-		getExpCount();
+		getExpCount($scope);
 
 		function getIncCount() {
-				$scope.incCount = 0;
+				var incTotal = 0;
 				angular.forEach($scope.income, function(item) {
-						$scope.incCount = $scope.incCount + parseInt(item.inc_amount, 10);
+						incTotal = incTotal + parseFloat(item.inc_amount, 10);
 				});
+				$scope.incCount = incTotal.toFixed(2);
 		};
 		getIncCount();
 
-		function clearCommonRecords() {
-				$scope.expAmount = '';
-				$scope.expDate = '';
-				$scope.editingData = false;
-		}
+		$scope.closeExpForm = function() {
+				$scope.showForm = false;
+				$scope.xmAddExp.$setPristine();
+		};
+
+		$scope.closeIncForm = function() {
+				$scope.showForm = false;
+				$scope.xmAddInc.$setPristine();
+		};
 
 		function clearExpForm() {
 				$scope.defaultExpCat = {id: 3, name: 'Shopping'};
 				$scope.defaultMode = {id: 2, name: 'Cash'};
-				clearCommonRecords();
+				$scope.expAmount = '';
+				$scope.expDate = '';
+				$scope.newNote = '';
+				$scope.editingData = false;
 		};
 
 		function clearIncForm() {
 				$scope.defaultIncCat = {id: 1, name: 'Salary'};
 				$scope.defaultMode = {id: 2, name: 'cash'};
-				clearCommonRecords();
+				$scope.incAmount = '';
+				$scope.incDate = '';
+				$scope.editingData = false;
 		};
 
 		$scope.removeExpRecord = function(idx) {
@@ -89,6 +100,7 @@ expMgrModule.controller('expMgrCtrl', function($scope) {
 		$scope.modifyExp = function(item, idx) {
 				$scope.editingData = true;
 				$scope.showForm = true;
+				$scope.expSuccess = false;
 				$scope.currentIndex = idx;
 
 				for(i=0; i<$scope.expCat.length; i++) {
@@ -105,11 +117,13 @@ expMgrModule.controller('expMgrCtrl', function($scope) {
 				};
 				$scope.editExpAmount = item.exp_amount;
 				$scope.editExpDate = item.exp_date;
+				$scope.editNote = item.note;
 		};
 
 		$scope.modifyInc = function(item, idx) {
 				$scope.editingData = true;
 				$scope.showForm = true;
+				$scope.incSuccess = false;
 				$scope.currentIndex = idx;
 
 				for(i=0; i<$scope.incCat.length; i++) {
@@ -128,7 +142,7 @@ expMgrModule.controller('expMgrCtrl', function($scope) {
 				$scope.editIncDate = item.inc_date;
 		};
 
-		$scope.addNewRecord = function(type) {
+		$scope.addRecord = function(type) {
 				if(type === 'expense') {
 						if($scope.editingData) {
 								var idx = $scope.currentIndex;
@@ -137,6 +151,7 @@ expMgrModule.controller('expMgrCtrl', function($scope) {
 								$scope.expenses[idx].exp_amount = $scope.editExpAmount;
 								$scope.expenses[idx].exp_date = $scope.editExpDate;
 								$scope.expenses[idx].mode = $scope.selectedExpMode.name;
+								$scope.expenses[idx].note = $scope.editNote;
 								$scope.editingData = false;
 								$scope.expSuccess = true;
 								$scope.showForm = false;
@@ -150,10 +165,12 @@ expMgrModule.controller('expMgrCtrl', function($scope) {
 										'exp_cat': $scope.defaultExpCat.name,
 										'exp_amount': $scope.expAmount,
 										'exp_date': $scope.expDate,
-										'mode': $scope.defaultMode.name
+										'mode': $scope.defaultMode.name,
+										'note': $scope.newNote
 								});
 								getExpCount();
 								clearExpForm();
+								$scope.xmAddExp.$setPristine();
 						}
 				} else {
 						if($scope.editingData) {
@@ -179,8 +196,14 @@ expMgrModule.controller('expMgrCtrl', function($scope) {
 								});
 								getIncCount();
 								clearIncForm();
+								$scope.xmAddInc.$setPristine();
 						}
 				}
+		};
+
+		$scope.newRecord = function() {
+				$scope.showForm = true;
+				$scope.xmAddExp.$setPristine();
 		};
 
 });
