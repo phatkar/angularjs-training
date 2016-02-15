@@ -32,18 +32,9 @@ angular.module('expMgrApp').service('incomeMgrSrv', function(amountCountSrv, dat
           }
       };
 
-      var addNewRecord = function(scope) {
-          var incData = dataSrv.getIncomeData();
-          var lastIncId = scope.income[scope.income.length - 1].inc_id;
-          lastIncId = parseInt(lastIncId, 10) + 1;
-
-          incData.push({
-              'inc_id': lastIncId,
-              'inc_cat': scope.defaultIncCat.name,
-              'inc_amount': scope.incAmount,
-              'inc_date': scope.incDate,
-              'mode': scope.defaultMode.name
-         });
+      var addNewRecord = function(newIncomeData) {
+         var incData = dataSrv.getIncomeData();
+         incData.push(newIncomeData);
 
          return {
              incData: incData,

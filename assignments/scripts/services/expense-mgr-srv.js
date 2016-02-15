@@ -32,21 +32,10 @@ angular.module('expMgrApp').service('expenseMgrSrv', function(amountCountSrv, da
           }
       };
 
-      var addNewRecord = function(scope) {
+      var addNewRecord = function(newExpData) {
           var expData = dataSrv.getExpData();
-
-          var lastExpId = expData[expData.length - 1].exp_id;
-          lastExpId = parseInt(lastExpId, 10) + 1;
-
-          expData.push({
-              'exp_id': lastExpId,
-              'exp_cat': scope.defaultExpCat.name,
-              'exp_amount': scope.expAmount,
-              'exp_date': scope.expDate,
-              'mode': scope.defaultMode.name,
-              'note': scope.newNote
-          });
-
+          expData.push(newExpData);
+          
           return {
               expData: expData,
               expCount: amountCountSrv.getExpCount(expData)

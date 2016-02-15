@@ -95,46 +95,70 @@ expMgrModule.controller('expMgrCtrl', function($scope, dataSrv, amountCountSrv, 
 	$scope.addRecord = function(type) {
 		if(type === 'expense') {
 			if($scope.editingData) {
-					var idx = $scope.currentIndex;
+				var idx = $scope.currentIndex;
 
-					$scope.expenses[idx].exp_cat = $scope.selectedExpCat.name;
-					$scope.expenses[idx].exp_amount = $scope.editExpAmount;
-					$scope.expenses[idx].exp_date = $scope.editExpDate;
-					$scope.expenses[idx].mode = $scope.selectedExpPaymentMode.name;
-					$scope.expenses[idx].note = $scope.editNote;
+				$scope.expenses[idx].exp_cat = $scope.selectedExpCat.name;
+				$scope.expenses[idx].exp_amount = $scope.editExpAmount;
+				$scope.expenses[idx].exp_date = $scope.editExpDate;
+				$scope.expenses[idx].mode = $scope.selectedExpPaymentMode.name;
+				$scope.expenses[idx].note = $scope.editNote;
 
-					$scope.editingData = false;
-					$scope.expSuccess = true;
-					$scope.showForm = false;
-					$scope.expCount = amountCountSrv.getExpCount($scope.expenses)
+				$scope.editingData = false;
+				$scope.expSuccess = true;
+				$scope.showForm = false;
+				$scope.expCount = amountCountSrv.getExpCount($scope.expenses)
 			} else {
 
-					var newRecord = expenseMgrSrv.addNewRecord($scope);
-					newRecord.expData;
-					$scope.expCount = newRecord.expCount;
-					clearExpForm();
-					$scope.xmAddExp.$setPristine();
+				var lastExpId = $scope.expenses[$scope.expenses.length - 1].exp_id;
+				lastExpId = parseInt(lastExpId, 10) + 1;
+
+				var expenseToUpdate = {
+					'exp_id': lastExpId,
+					'exp_cat': $scope.defaultExpCat.name,
+					'exp_amount': $scope.expAmount,
+					'exp_date': $scope.expDate,
+					'mode': $scope.defaultMode.name,
+					'note': $scope.newNote
+				};
+
+				var newRecord = expenseMgrSrv.addNewRecord(expenseToUpdate);
+				newRecord.expData;
+				$scope.expCount = newRecord.expCount;
+				clearExpForm();
+				$scope.xmAddExp.$setPristine();
 			}
 		} else {
 			if($scope.editingData) {
-					var idx = $scope.currentIndex;
+				var idx = $scope.currentIndex;
 
-					$scope.income[idx].inc_cat = $scope.selectedIncCat.name;
-					$scope.income[idx].inc_amount = $scope.editIncAmount;
-					$scope.income[idx].inc_date = $scope.editIncDate;
-					$scope.income[idx].mode = $scope.selectedIncMode.name;
+				$scope.income[idx].inc_cat = $scope.selectedIncCat.name;
+				$scope.income[idx].inc_amount = $scope.editIncAmount;
+				$scope.income[idx].inc_date = $scope.editIncDate;
+				$scope.income[idx].mode = $scope.selectedIncMode.name;
 
-					$scope.editingData = false;
-					$scope.incSuccess = true;
-					$scope.showForm = false;
-					$scope.incCount = amountCountSrv.getIncCount($scope.income);
+				$scope.editingData = false;
+				$scope.incSuccess = true;
+				$scope.showForm = false;
+				$scope.incCount = amountCountSrv.getIncCount($scope.income);
 			} else {
 
-					var newRecord = incomeMgrSrv.addNewRecord($scope);
-					newRecord.incData;
-					$scope.incCount = newRecord.incCount;
-					clearIncForm();
-					$scope.xmAddInc.$setPristine();
+				var incData = dataSrv.getIncomeData();
+				var lastIncId = $scope.income[$scope.income.length - 1].inc_id;
+				lastIncId = parseInt(lastIncId, 10) + 1;
+
+				var incomeToUpdate = {
+					'inc_id': lastIncId,
+					'inc_cat': $scope.defaultIncCat.name,
+					'inc_amount': $scope.incAmount,
+					'inc_date': $scope.incDate,
+					'mode': $scope.defaultMode.name
+				};
+
+				var newRecord = incomeMgrSrv.addNewRecord(incomeToUpdate);
+				newRecord.incData;
+				$scope.incCount = newRecord.incCount;
+				clearIncForm();
+				$scope.xmAddInc.$setPristine();
 			}
 		}
 	};
