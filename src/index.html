@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+      <link rel="stylesheet" type="text/css" href="styles/main.css">
+    </head>
+
+    <body class="exp-mgr-wrapper" ng-app="expMgrApp">
+
+      <div ng-controller="expMgrCtrl" class="container-full main" ng-init="init()">
+
+        <div class="container-full min-body">
+            <nav class="navbar navbar-inverse">
+              <div class="container-fluid">
+                <a href="#home">
+                    <div class="navbar-header em-logo">
+                        <img src="resource/pngs/logo8.png" /><span class="logo">EM</span>
+                    </div>
+                </a>
+                <ul class="nav navbar-nav">
+                  <li class=""><a href="#income"><i class="fa fa-angle-double-down"></i> Income</a></li>
+                  <li><a href="#expense"><i class="fa fa-angle-double-up"></i> Expense</a></li>
+                </ul>
+              </div>
+            </nav>
+
+            <div class="page-content">
+                <div ng-view></div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!--
+        <div class="footer-cntr">
+            <span>Home</span> <span> | Income </span> <span> | Expense </span>
+        </div>
+        -->
+
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.0/jquery.js"></script>
+        <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.8/angular.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.8/angular-messages.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.8/angular-route.min.js"></script>
+
+        <script type="text/javascript" src="scripts/main.js"></script>
+        <script type="text/javascript" src="scripts/routes.js"></script>
+        <script type="text/javascript" src="scripts/common/services/data-srv.js"></script>
+        <script type="text/javascript" src="scripts/common/directives/valid-amount-dir.js"></script>
+        <script type="text/javascript" src="scripts/directives/valid-note-dir.js"></script>
+        <script type="text/javascript" src="scripts/services/amount-count-srv.js"></script>
+        <script type="text/javascript" src="scripts/services/expense-mgr-srv.js"></script>
+        <script type="text/javascript" src="scripts/services/income-mgr-srv.js"></script>
+		</body>
+
+</html>

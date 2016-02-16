@@ -1,0 +1,107 @@
+<div class="list-container">
+
+    <span class="badge-tag">
+        <h3 class="title badge inc-badge">
+            <i class="fa fa-money"></i> Total Income - <span ng-bind="incCount | currency:'&#8377;'"></span>
+        </h3>
+    </span>
+
+    <div class="add-new">
+        <img src="resource/pngs/add.png" ng-click="newIncRecord()" data-toggle="tooltip" title="Add Income"/>
+    </div>
+
+    <div class="form-record-cntr" ng-show="showForm">
+
+        <div class="new-entry">
+          <div class="panel panel-default">
+              <div class="panel-heading">Income Details</div>
+              <div class="panel-body">
+              <form class="form" name="xmAddInc" role="form" ng-submit="xmAddInc.$valid && addRecord('income')" novalidate>
+
+                <div class="form-group">
+                  <div class="row">
+                      <div class="col-xs-12">
+                          <label for="lname">Amount:</label>
+                          <input type="text" name="newIncAmount" valid-amount ng-hide="editingData" class="form-control" ng-model="incAmount" ng-required="!editingData">
+                          <div ng-messages="xmAddInc.newIncAmount.$error" ng-if="xmAddInc.$submitted && !editingData">
+                              <div ng-message="required" class="error-msg"><span class="glyphicon glyphicon-info-sign"></span> Enter Amount</div>
+                          </div>
+                          <input ng-show="editingData" type="text" valid-amount class="form-control" name="updateIncAmount" ng-model="editIncAmount" ng-required="editingData">
+                          <div ng-messages="xmAddInc.updateIncAmount.$error" ng-if="xmAddInc.$submitted && editingData">
+                              <div ng-message="required" class="error-msg"><span class="glyphicon glyphicon-info-sign"></span> Enter Updated Amount</div>
+                          </div>
+                      </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <label for="email">Date:</label>
+                            <input type="text" name="newIncDate" ng-hide="editingData" class="form-control" ng-model="incDate" ng-required="!editingData">
+                            <div ng-messages="xmAddInc.newIncDate.$error" ng-if="xmAddInc.$submitted && !editingData">
+                                <div ng-message="required" class="error-msg"><span class="glyphicon glyphicon-info-sign"></span> Enter Date</div>
+                            </div>
+                            <input type="text" name="updateIncDate" ng-show="editingData" class="form-control" ng-model="editIncDate" ng-required="editingData">
+                            <div ng-messages="xmAddInc.updateIncDate.$error" ng-if="xmAddInc.$submitted && editingData">
+                                <div ng-message="required" class="error-msg"><span class="glyphicon glyphicon-info-sign"></span> Enter Updated Date</div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <label for="fname">Income Type:</label>
+                            <select class="form-control" ng-hide="editingData" ng-model="defaultIncCat" ng-options="item.name for item in inc_cat track by item.id"></select>
+                            <select class="form-control" ng-show="editingData" ng-model="selectedIncCat" ng-options="item.name for item in inc_cat track by item.id"></select>
+                        </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <label for="age">Mode</label>
+                            <select class="form-control" ng-hide="editingData" ng-model="defaultMode" ng-options="item.name for item in mode track by item.id"></select>
+                            <select class="form-control" ng-show="editingData" ng-model="selectedIncMode" ng-options="item.name for item in mode track by item.id"></select>
+                        </div>
+                    </div>
+                  </div>
+
+                  <button type="submit" ng-hide="editingData" class="btn-primary"><span class="glyphicon glyphicon-save"></span> Submit</button>
+                  <button type="submit" ng-show="editingData" class="btn-primary" ng-click="updateRecord()"><span class="glyphicon glyphicon-save"></span> Update</button>
+                  <button type="reset" class="btn-primary" ng-click="closeIncForm()"><span class="glyphicon glyphicon-remove"></span> Close</button>
+              </form>
+              </div>
+          </div>
+        </div>
+        <div class="record-list">
+            <span class="filler" ng-show="editingData"> Update <br/> This <br/> Income.. </span>
+            <span class="filler" ng-show="!editingData"> Add <br/> New <br/> Income.. </span>
+        </div>
+
+    </div>
+
+    <table id="income-table" class="table table-hover table-striped">
+        <thead class="table-header">
+          <tr>
+              <th>Income Type</th>
+              <th>Amount</th>
+              <th>Date</th>
+              <th>Mode</th>
+              <th class="action-button"></th>
+              <th class="action-button"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="item in income">
+              <td>{{item.inc_cat}}</td>
+              <td>{{item.inc_amount}}</td>
+              <td>{{item.inc_date}}</td>
+              <td>{{item.mode}}</td>
+              <td class="action-button edit">
+                  <i class="fa fa-pencil-square-o" ng-click="modifyInc(item, $index)" style="cursor: pointer; cursor: hand;" data-toggle="tooltip" title="Update"></i>
+              </td>
+              <td class="action-button delete">
+                  <i class="fa fa-trash-o" ng-click="removeIncRecord($index)" style="cursor: pointer; cursor: hand;" data-toggle="tooltip" title="Remove"></i>
+              </td>
+          </tr>
+        </tbody>
+    </table>
+
+</div>
