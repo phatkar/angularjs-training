@@ -1,4 +1,4 @@
-<div class="list-container">
+<div class="list-container" ng-init="init()">
 
     <span class="badge-tag">
         <h3 class="title badge exp-badge">
@@ -16,7 +16,7 @@
           <div class="panel panel-default">
               <div class="panel-heading">Expense Details</div>
               <div class="panel-body">
-                  <form class="form" name="xmAddExp" role="form" ng-submit="xmAddExp.$valid && addRecord('expense')" novalidate>
+                  <form class="form" name="xmAddExp" role="form" ng-submit="xmAddExp.$valid && addRecord()" novalidate>
                         <div class="form-group">
                           <div class="row">
                               <div class="col-xs-12">
