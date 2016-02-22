@@ -1,15 +1,15 @@
 expMgrModule.config( ['$routeProvider', function($routeProvider) {
 	$routeProvider
 		.when('/income', {
-			templateUrl: 'views/income.html',
+			templateUrl: 'src/views/income.html',
 			controller: 'incCtrl'
 		})
 		.when('/expense', {
-			templateUrl: 'views/expense.html',
+			templateUrl: 'src/views/expense.html',
 			controller: 'expCtrl'
 		})
 		.when('/home', {
-			templateUrl: 'views/home.html',
+			templateUrl: 'src/views/home.html',
 			controller: 'expMgrCtrl'
 		})
 		.otherwise({

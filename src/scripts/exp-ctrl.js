@@ -1,20 +1,19 @@
-expMgrModule.controller('expCtrl', function($scope, dataSrv, amountCountSrv, expenseMgrSrv, incomeMgrSrv) {
+expMgrModule.controller('expCtrl', function($scope, $q, $http, dataSrv, amountCountSrv, expenseMgrSrv, incomeMgrSrv) {
 
     $scope.init = function() {
-        var expCatData = dataSrv.getExpCatData();
-        var paymentModeData = dataSrv.getPaymentMode();
-
-        $scope.mode = paymentModeData.mode;
-        $scope.defaultMode = paymentModeData.defaultMode;
-
-        $scope.exp_cat = expCatData.expCat;
-        $scope.defaultExpCat = expCatData.defaultExpCat;
-        $scope.expenses = dataSrv.getExpData();
-        $scope.expCount = amountCountSrv.getExpCount(dataSrv.getExpData());
-
         $scope.editingData = false;
         $scope.showContent = 'expense';
-    }
+        $scope.newNote = '';
+
+        dataSrv.getData().then(function(respData) {
+            $scope.expenses = respData.data.expenses;
+            $scope.expCount = amountCountSrv.getExpCount($scope.expenses);
+            $scope.exp_cat = respData.data.expCat;
+            $scope.defaultExpCat = respData.data.defaultExpCat;
+            $scope.mode = respData.data.mode;
+            $scope.defaultMode = respData.data.defaultMode;
+        });
+    };
 
     function clearExpForm() {
 		$scope.defaultExpCat = {id: 3, name: 'Shopping'};
@@ -31,7 +30,10 @@ expMgrModule.controller('expCtrl', function($scope, dataSrv, amountCountSrv, exp
     };
 
     $scope.removeExpRecord = function(idx) {
-        $scope.expCount = expenseMgrSrv.removeExpRecord(idx);
+        expenseMgrSrv.removeExpRecord(idx).then(function(respData) {
+            $scope.expCount = respData.expCount;
+            $scope.expenses = respData.expData.expenses;
+        });
     };
 
     $scope.newExpRecord = function() {
@@ -45,8 +47,12 @@ expMgrModule.controller('expCtrl', function($scope, dataSrv, amountCountSrv, exp
         $scope.showForm = true;
         $scope.currentIndex = idx;
 
-        $scope.selectedExpCat = expenseMgrSrv.getSelectedExpCat(item);
-        $scope.selectedExpPaymentMode = expenseMgrSrv.getPaymentMode(item);
+        expenseMgrSrv.getSelectedExpCat(item).then(function(respData) {
+            $scope.selectedExpCat = respData;
+        });
+        expenseMgrSrv.getPaymentMode(item).then(function(respData) {
+            $scope.selectedExpPaymentMode = respData;
+        });
         $scope.editExpAmount = item.exp_amount;
         $scope.editExpDate = item.exp_date;
         $scope.editNote = item.note;
@@ -54,40 +60,57 @@ expMgrModule.controller('expCtrl', function($scope, dataSrv, amountCountSrv, exp
 
     $scope.addRecord = function() {
         if($scope.editingData) {
+            var expData;
             var idx = $scope.currentIndex;
 
-            $scope.expenses[idx].exp_cat = $scope.selectedExpCat.name;
-            $scope.expenses[idx].exp_amount = $scope.editExpAmount;
-            $scope.expenses[idx].exp_date = $scope.editExpDate;
-            $scope.expenses[idx].mode = $scope.selectedExpPaymentMode.name;
-            $scope.expenses[idx].note = $scope.editNote;
+            dataSrv.getData().then(function(respData) {
+
+                respData.data.expenses[idx].exp_cat = $scope.selectedExpCat.name;
+                respData.data.expenses[idx].exp_amount = $scope.editExpAmount;
+                respData.data.expenses[idx].exp_date = $scope.editExpDate;
+                respData.data.expenses[idx].mode = $scope.selectedExpPaymentMode.name;
+                respData.data.expenses[idx].note = $scope.editNote;
+
+                $http.put('https://api.myjson.com/bins/3jfpn/', respData).success(function(resp, status) {
+                    expData = resp.data;
+                    $scope.expenses = expData.expenses;
+                    $scope.expCount = amountCountSrv.getExpCount(expData.expenses);
+                });
+
+            });
 
             $scope.editingData = false;
             $scope.showForm = false;
-            $scope.expCount = amountCountSrv.getExpCount($scope.expenses)
         } else {
             var lastExpId;
-            if($scope.expenses.length > 0) {
-                lastExpId = $scope.expenses[$scope.expenses.length - 1].exp_id;
-                lastExpId = parseInt(lastExpId, 10) + 1;
-            } else {
-                lastExpId = 0;
-            }
+            var expData;
 
-            var expenseToUpdate = {
-                'exp_id': lastExpId,
-                'exp_cat': $scope.defaultExpCat.name,
-                'exp_amount': $scope.expAmount,
-                'exp_date': $scope.expDate,
-                'mode': $scope.defaultMode.name,
-                'note': $scope.newNote
-            };
+            dataSrv.getData().then(function(respData) {
+                expData = respData.data.expenses;
 
-            var newRecord = expenseMgrSrv.addNewRecord(expenseToUpdate);
-            newRecord.expData;
-            $scope.expCount = newRecord.expCount;
-            clearExpForm();
-            $scope.xmAddExp.$setPristine();
+                if(expData.length > 0) {
+                    lastExpId = expData[expData.length - 1].exp_id;
+                    lastExpId = parseInt(lastExpId, 10) + 1;
+                } else {
+                    lastExpId = 0;
+                }
+
+                var expenseToUpdate = {
+                    'exp_id': lastExpId,
+                    'exp_cat': $scope.defaultExpCat.name,
+                    'exp_amount': $scope.expAmount,
+                    'exp_date': $scope.expDate,
+                    'mode': $scope.defaultMode.name,
+                    'note': $scope.newNote
+                };
+
+                expenseMgrSrv.addNewRecord(expenseToUpdate).then(function(resp) {
+                    $scope.expenses = resp.expData.expenses;
+                    $scope.expCount = resp.expCount;
+                });
+                clearExpForm();
+                $scope.xmAddExp.$setPristine();
+            });
         }
     };
 

@@ -1,19 +1,18 @@
-expMgrModule.controller('incCtrl', function($scope, dataSrv, amountCountSrv, expenseMgrSrv, incomeMgrSrv) {
+expMgrModule.controller('incCtrl', function($scope, $q, $http, dataSrv, amountCountSrv, expenseMgrSrv, incomeMgrSrv) {
 
     $scope.init = function() {
-		var incCatData = dataSrv.getIncCatData();
-		var paymentModeData = dataSrv.getPaymentMode();
 
-		$scope.mode = paymentModeData.mode;
-		$scope.defaultMode = paymentModeData.defaultMode;
-
-		$scope.inc_cat = incCatData.incCat;
-		$scope.defaultIncCat = incCatData.defaultIncCat;
-		$scope.income = dataSrv.getIncomeData();
-		$scope.incCount = amountCountSrv.getIncCount(dataSrv.getIncomeData());
+        dataSrv.getData().then(function(respData) {
+            $scope.income = respData.data.income;
+            $scope.incCount = amountCountSrv.getIncCount($scope.income);
+            $scope.mode = respData.data.mode;
+            $scope.defaultMode = respData.data.defaultMode;
+            $scope.inc_cat = respData.data.incCat;
+            $scope.defaultIncCat = respData.data.defaultIncCat;
+        });
 
 		$scope.editingData = false;
-		$scope.showContent = 'expense';
+		$scope.showContent = 'income';
 	}
 
     function clearIncForm() {
@@ -30,7 +29,10 @@ expMgrModule.controller('incCtrl', function($scope, dataSrv, amountCountSrv, exp
     };
 
     $scope.removeIncRecord = function(idx) {
-        $scope.incCount = incomeMgrSrv.removeIncRecord(idx);
+        incomeMgrSrv.removeIncRecord(idx).then(function(respData) {
+            $scope.incCount = respData.incCount;
+            $scope.income = respData.incData.income;
+        });
     };
 
     $scope.newIncRecord = function() {
@@ -40,51 +42,73 @@ expMgrModule.controller('incCtrl', function($scope, dataSrv, amountCountSrv, exp
     };
 
     $scope.modifyInc = function(item, idx) {
+
         $scope.editingData = true;
         $scope.showForm = true;
         $scope.currentIndex = idx;
 
-        $scope.selectedIncCat = incomeMgrSrv.getSelectedIncCat(item);
-        $scope.selectedIncMode = incomeMgrSrv.getPaymentMode(item);
+        incomeMgrSrv.getSelectedIncCat(item).then(function(respData) {
+            $scope.selectedIncCat = respData;
+        });
+        incomeMgrSrv.getPaymentMode(item).then(function(respData) {
+            $scope.selectedIncMode = respData;
+        });
+
         $scope.editIncAmount = item.inc_amount;
         $scope.editIncDate = item.inc_date;
     };
 
     $scope.addRecord = function(type) {
         if($scope.editingData) {
+            var incData;
             var idx = $scope.currentIndex;
 
-            $scope.income[idx].inc_cat = $scope.selectedIncCat.name;
-            $scope.income[idx].inc_amount = $scope.editIncAmount;
-            $scope.income[idx].inc_date = $scope.editIncDate;
-            $scope.income[idx].mode = $scope.selectedIncMode.name;
+            dataSrv.getData().then(function(respData) {
 
+                respData.data.income[idx].inc_cat = $scope.selectedIncCat.name;
+                respData.data.income[idx].inc_amount = $scope.editIncAmount;
+                respData.data.income[idx].inc_date = $scope.editIncDate;
+                respData.data.income[idx].mode = $scope.selectedIncMode.name;
+
+                $http.put('https://api.myjson.com/bins/3jfpn/', respData).success(function(resp, status) {
+                    incData = resp.data;
+                    $scope.income = incData.income;
+                    $scope.incCount = amountCountSrv.getIncCount(incData.income);
+                });
+
+            });
             $scope.editingData = false;
             $scope.showForm = false;
-            $scope.incCount = amountCountSrv.getIncCount($scope.income);
+
         } else {
             var lastIncId;
-            var incData = dataSrv.getIncomeData();
-            if($scope.income.length > 0) {
-                lastIncId = $scope.income[$scope.income.length - 1].inc_id;
-                lastIncId = parseInt(lastIncId, 10) + 1;
-            } else {
-                lastIncId = 0;
-            }
+            var incData;
 
-            var incomeToUpdate = {
-                'inc_id': lastIncId,
-                'inc_cat': $scope.defaultIncCat.name,
-                'inc_amount': $scope.incAmount,
-                'inc_date': $scope.incDate,
-                'mode': $scope.defaultMode.name
-            };
+            dataSrv.getData().then(function(respData) {
+                incData = respData.data.income;
 
-            var newRecord = incomeMgrSrv.addNewRecord(incomeToUpdate);
-            newRecord.incData;
-            $scope.incCount = newRecord.incCount;
-            clearIncForm();
-            $scope.xmAddInc.$setPristine();
+                if(incData.length > 0) {
+                    lastIncId = incData[incData.length - 1].inc_id;
+                    lastIncId = parseInt(lastIncId, 10) + 1;
+                } else {
+                    lastIncId = 0;
+                }
+
+                var incomeToUpdate = {
+                    'inc_id': lastIncId,
+                    'inc_cat': $scope.defaultIncCat.name,
+                    'inc_amount': $scope.incAmount,
+                    'inc_date': $scope.incDate,
+                    'mode': $scope.defaultMode.name
+                };
+
+                incomeMgrSrv.addNewRecord(incomeToUpdate).then(function(resp) {
+                    $scope.income = resp.incData.income;
+                    $scope.incCount = resp.incCount;
+                });
+                clearIncForm();
+                $scope.xmAddInc.$setPristine();
+            });
         }
     };
 

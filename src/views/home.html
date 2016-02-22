@@ -1,3 +1,19 @@
-<div class="home-content">
-    <span class="home-font">Manage <br/>Your <br/>Expenses</home>
+<div class="home-content" ng-init="init()">
+    <span class="home-font">Manage <br/>Your <br/>Expenses</span><br/><br/><br/>
+    <table id="home-table" class="table table-condensed table-bordered">
+        <thead>
+          <tr>
+            <th>Income</th>
+            <th>Expense</th>
+            <th>Balance</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td ng-bind="incCount | currency:'&#8377;'"></td>
+            <td ng-bind="expCount | currency:'&#8377;'"></td>
+            <td ng-bind="balCount | currency:'&#8377;'"></td>
+          </tr>
+        </tbody>
+    </table>
 </div>

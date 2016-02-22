@@ -1,45 +1,79 @@
-angular.module('expMgrApp').service('incomeMgrSrv', function(amountCountSrv, dataSrv) {
+angular.module('expMgrApp').service('incomeMgrSrv', function($http, $q, amountCountSrv, dataSrv) {
 
       var removeIncRecord = function(idx) {
-          var incData = dataSrv.getIncomeData();
-          incData.splice(idx, 1);
-          return amountCountSrv.getIncCount(incData);
+          var incData;
+          var incCount;
+          var deferred = $q.defer();
+
+          dataSrv.getData().then(function(respData) {
+              respData.data.income.splice(idx, 1);
+              $http.put('https://api.myjson.com/bins/3jfpn/', respData).success(function(resp, status) {
+                  incData = resp.data;
+                  deferred.resolve({
+                      incData: incData,
+                      incCount: amountCountSrv.getIncCount(incData.income)
+                  });
+              });
+          });
+
+          return deferred.promise;
       };
 
       var getSelectedIncCat = function(item) {
           var selectedIncCat;
-          var incCatList = dataSrv.getIncCatData();
-          incCatList = incCatList.incCat;
+          var incCatList;
+          var deferred = $q.defer();
 
-          for(var i=0; i<incCatList.length; i++) {
-              if(incCatList[i].name === item.inc_cat) {
-                  return selectedIncCat = incCatList[i];
-            	  break;
+          dataSrv.getData().then(function(respData) {
+              incCatList = respData.data.incCat;
+
+              for(var i=0; i<incCatList.length; i++) {
+                  if(incCatList[i].name === item.inc_cat) {
+                      selectedIncCat = incCatList[i];
+                      deferred.resolve(selectedIncCat);
+                  }
               }
-          };
+          });
+          return deferred.promise;
+
       };
 
       var getPaymentMode = function(item) {
-          var paymentModeList = dataSrv.getPaymentMode();
-          paymentModeList = paymentModeList.mode;
+          var paymentModeList;
           var selectedIncPaymentMode;
+          var deferred = $q.defer();
 
-          for(var i=0; i<paymentModeList.length; i++) {
-              if(paymentModeList[i].name === item.mode) {
-                  return selectedIncPaymentMode = paymentModeList[i];
-                  break;
+          dataSrv.getData().then(function(respData) {
+              paymentModeList = respData.data.mode;
+
+              for(var i=0; i<paymentModeList.length; i++) {
+                  if(paymentModeList[i].name === item.mode) {
+                      selectedIncPaymentMode = paymentModeList[i];
+                      deferred.resolve(selectedIncPaymentMode);
+                  }
               }
-          }
+          });
+          return deferred.promise;
+
       };
 
       var addNewRecord = function(newIncomeData) {
-         var incData = dataSrv.getIncomeData();
-         incData.push(newIncomeData);
+          var incData;
+          var incCount;
+          var deferred = $q.defer();
 
-         return {
-             incData: incData,
-             incCount: amountCountSrv.getIncCount(incData)
-         }
+          dataSrv.getData().then(function(respData) {
+               respData.data.income.push(newIncomeData);
+
+               $http.put('https://api.myjson.com/bins/3jfpn', respData).success(function(resp, status) {
+                   incData = resp.data;
+                   deferred.resolve({
+                       incData: incData,
+                       incCount: amountCountSrv.getIncCount(incData.income)
+                   });
+               });
+          });
+          return deferred.promise;
       };
 
       return {
