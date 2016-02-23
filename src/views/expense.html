@@ -36,8 +36,8 @@
                           <div class="row">
                               <div class="col-xs-6">
                                   <label for="age">Expense For:</label>
-                                  <select ng-hide="editingData" class="form-control" ng-model="defaultExpCat" ng-options="item.name for item in exp_cat track by item.id"></select>
-                                  <select ng-show="editingData" class="form-control" ng-model="selectedExpCat" ng-options="item.name for item in exp_cat track by item.id"></select>
+                                  <select ng-hide="editingData" class="form-control" ng-model="defaultExpCat" ng-options="item.exp_cat for item in exp_cat track by item.exp_cat"></select>
+                                  <select ng-show="editingData" class="form-control" ng-model="selectedExpCat" ng-options="item.exp_cat for item in exp_cat track by item.exp_cat"></select>
                               </div>
                               <div class="col-xs-6">
                                   <label for="age">Payment Mode:</label>
@@ -99,6 +99,7 @@
           </tr>
         </thead>
         <tbody>
+
           <tr ng-repeat="item in expenses">
               <td>
                   <div ng-hide="editingData[item.exp_id]">{{item.exp_cat}}</div>

@@ -7,7 +7,7 @@ angular.module('expMgrApp').service('incomeMgrSrv', function($http, $q, amountCo
 
           dataSrv.getData().then(function(respData) {
               respData.data.income.splice(idx, 1);
-              $http.put('https://api.myjson.com/bins/3jfpn/', respData).success(function(resp, status) {
+              $http.put('https://api.myjson.com/bins/3q8dz', respData).success(function(resp, status) {
                   incData = resp.data;
                   deferred.resolve({
                       incData: incData,
@@ -28,7 +28,7 @@ angular.module('expMgrApp').service('incomeMgrSrv', function($http, $q, amountCo
               incCatList = respData.data.incCat;
 
               for(var i=0; i<incCatList.length; i++) {
-                  if(incCatList[i].name === item.inc_cat) {
+                  if(incCatList[i].inc_cat === item.inc_cat) {
                       selectedIncCat = incCatList[i];
                       deferred.resolve(selectedIncCat);
                   }
@@ -65,7 +65,7 @@ angular.module('expMgrApp').service('incomeMgrSrv', function($http, $q, amountCo
           dataSrv.getData().then(function(respData) {
                respData.data.income.push(newIncomeData);
 
-               $http.put('https://api.myjson.com/bins/3jfpn', respData).success(function(resp, status) {
+               $http.put('https://api.myjson.com/bins/3q8dz', respData).success(function(resp, status) {
                    incData = resp.data;
                    deferred.resolve({
                        incData: incData,

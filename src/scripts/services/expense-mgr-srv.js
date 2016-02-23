@@ -5,7 +5,7 @@ angular.module('expMgrApp').service('expenseMgrSrv', function(amountCountSrv, da
 
           dataSrv.getData().then(function(respData) {
               respData.data.expenses.splice(idx, 1);
-              $http.put('https://api.myjson.com/bins/3jfpn/', respData).success(function(resp, status) {
+              $http.put('https://api.myjson.com/bins/3q8dz', respData).success(function(resp, status) {
                   expData = resp.data;
                   deferred.resolve({
                       expData: expData,
@@ -26,7 +26,7 @@ angular.module('expMgrApp').service('expenseMgrSrv', function(amountCountSrv, da
               expCatList = respData.data.expCat;
 
               for(var i=0; i<expCatList.length; i++) {
-                  if(expCatList[i].name === item.exp_cat) {
+                  if(expCatList[i].exp_cat === item.exp_cat) {
                       selectedExpCat = expCatList[i];
                       deferred.resolve(selectedExpCat);
                   }
@@ -62,7 +62,7 @@ angular.module('expMgrApp').service('expenseMgrSrv', function(amountCountSrv, da
           dataSrv.getData().then(function(respData) {
                respData.data.expenses.push(newExpData);
 
-               $http.put('https://api.myjson.com/bins/3jfpn', respData).success(function(resp, status) {
+               $http.put('https://api.myjson.com/bins/3q8dz', respData).success(function(resp, status) {
                    expData = resp.data;
                    deferred.resolve({
                        expData: expData,

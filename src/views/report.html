@@ -1,0 +1,72 @@
+<div class="list-container" ng-init="init()">
+
+    <div style="overflow: auto;">
+        <div style="width:20%; color: whitesmoke; float: left; font-family: inherit;">
+            <label>Select Category:</label>
+            <select class="form-control" ng-model="defaultExpCat" ng-options="item.exp_cat for item in exp_cat track by item.exp_cat"></select>
+        </div>
+        <div style="margin-top:10px; float: right; margin-top: 26px;">
+            <input type="text" ng-model="expReport" placeholder="Search Expenses" class="form-control">
+        </div>
+    </div>
+
+    <table id="expense-table" class="table table-hover table-striped">
+        <thead class="table-header">
+          <tr>
+              <th>Category</th>
+              <th>Amount</th>
+              <th>Date</th>
+              <th>Mode</th>
+              <th>Note</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="item in expenses | filter: defaultExpCat | filter: expReport">
+              <td>
+                  <div>{{item.exp_cat}}</div>
+              </td>
+              <td>
+                  <div>{{item.exp_amount}}</div>
+              </td>
+              <td>
+                  <div>{{item.exp_date}}</div>
+              <td>
+                  <div>{{item.mode}}</div>
+              </td>
+              <td>
+                  <div>{{item.note}}</div>
+              </td>
+          </tr>
+        </tbody>
+    </table>
+
+    <div style="overflow: auto; margin-top: 50px;">
+        <div style="width:20%; color: whitesmoke; font-family: inherit; float: left;">
+            <label>Income Source:</label>
+            <select class="form-control" ng-model="defaultIncCat" ng-options="item.inc_cat for item in inc_cat track by item.inc_cat"></select>
+        </div>
+        <div style="margin-top:10px; float: right; margin-top: 26px;">
+            <input type="text" ng-model="expReport" placeholder="Search Income" class="form-control">
+        </div>
+    </div>
+
+    <table id="income-table" class="table table-hover table-striped">
+        <thead class="table-header">
+          <tr>
+              <th>Income Type</th>
+              <th>Amount</th>
+              <th>Date</th>
+              <th>Mode</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="item in income | filter: defaultIncCat">
+              <td>{{item.inc_cat}}</td>
+              <td>{{item.inc_amount}}</td>
+              <td>{{item.inc_date}}</td>
+              <td>{{item.mode}}</td>
+          </tr>
+        </tbody>
+    </table>
+
+</div>

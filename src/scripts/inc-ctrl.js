@@ -16,7 +16,7 @@ expMgrModule.controller('incCtrl', function($scope, $q, $http, dataSrv, amountCo
 	}
 
     function clearIncForm() {
-        $scope.defaultIncCat = {id: 1, name: 'Salary'};
+        $scope.defaultIncCat = {name: 'Salary'};
         $scope.defaultMode = {id: 2, name: 'cash'};
         $scope.incAmount = '';
         $scope.incDate = '';
@@ -65,12 +65,12 @@ expMgrModule.controller('incCtrl', function($scope, $q, $http, dataSrv, amountCo
 
             dataSrv.getData().then(function(respData) {
 
-                respData.data.income[idx].inc_cat = $scope.selectedIncCat.name;
+                respData.data.income[idx].inc_cat = $scope.selectedIncCat.inc_cat;
                 respData.data.income[idx].inc_amount = $scope.editIncAmount;
                 respData.data.income[idx].inc_date = $scope.editIncDate;
                 respData.data.income[idx].mode = $scope.selectedIncMode.name;
 
-                $http.put('https://api.myjson.com/bins/3jfpn/', respData).success(function(resp, status) {
+                $http.put('https://api.myjson.com/bins/3q8dz', respData).success(function(resp, status) {
                     incData = resp.data;
                     $scope.income = incData.income;
                     $scope.incCount = amountCountSrv.getIncCount(incData.income);
@@ -96,7 +96,7 @@ expMgrModule.controller('incCtrl', function($scope, $q, $http, dataSrv, amountCo
 
                 var incomeToUpdate = {
                     'inc_id': lastIncId,
-                    'inc_cat': $scope.defaultIncCat.name,
+                    'inc_cat': $scope.defaultIncCat.inc_cat,
                     'inc_amount': $scope.incAmount,
                     'inc_date': $scope.incDate,
                     'mode': $scope.defaultMode.name

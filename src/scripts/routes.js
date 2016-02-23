@@ -12,6 +12,10 @@ expMgrModule.config( ['$routeProvider', function($routeProvider) {
 			templateUrl: 'src/views/home.html',
 			controller: 'expMgrCtrl'
 		})
+		.when('/report', {
+			templateUrl: 'src/views/report.html',
+			controller: 'repCtrl'
+		})
 		.otherwise({
 			redirectTo: '/home'
 		});

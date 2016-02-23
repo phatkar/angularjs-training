@@ -48,8 +48,8 @@
                         </div>
                         <div class="col-xs-6">
                             <label for="fname">Income Type:</label>
-                            <select class="form-control" ng-hide="editingData" ng-model="defaultIncCat" ng-options="item.name for item in inc_cat track by item.id"></select>
-                            <select class="form-control" ng-show="editingData" ng-model="selectedIncCat" ng-options="item.name for item in inc_cat track by item.id"></select>
+                            <select class="form-control" ng-hide="editingData" ng-model="defaultIncCat" ng-options="item.inc_cat for item in inc_cat track by item.inc_cat"></select>
+                            <select class="form-control" ng-show="editingData" ng-model="selectedIncCat" ng-options="item.inc_cat for item in inc_cat track by item.inc_cat"></select>
                         </div>
                     </div>
                   </div>

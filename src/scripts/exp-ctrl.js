@@ -16,7 +16,7 @@ expMgrModule.controller('expCtrl', function($scope, $q, $http, dataSrv, amountCo
     };
 
     function clearExpForm() {
-		$scope.defaultExpCat = {id: 3, name: 'Shopping'};
+		$scope.defaultExpCat = {exp_cat: 'Shopping'};
 		$scope.defaultMode = {id: 2, name: 'Cash'};
 		$scope.expAmount = '';
 		$scope.expDate = '';
@@ -65,13 +65,13 @@ expMgrModule.controller('expCtrl', function($scope, $q, $http, dataSrv, amountCo
 
             dataSrv.getData().then(function(respData) {
 
-                respData.data.expenses[idx].exp_cat = $scope.selectedExpCat.name;
+                respData.data.expenses[idx].exp_cat = $scope.selectedExpCat.exp_cat;
                 respData.data.expenses[idx].exp_amount = $scope.editExpAmount;
                 respData.data.expenses[idx].exp_date = $scope.editExpDate;
                 respData.data.expenses[idx].mode = $scope.selectedExpPaymentMode.name;
                 respData.data.expenses[idx].note = $scope.editNote;
 
-                $http.put('https://api.myjson.com/bins/3jfpn/', respData).success(function(resp, status) {
+                $http.put('https://api.myjson.com/bins/3q8dz', respData).success(function(resp, status) {
                     expData = resp.data;
                     $scope.expenses = expData.expenses;
                     $scope.expCount = amountCountSrv.getExpCount(expData.expenses);
@@ -97,7 +97,7 @@ expMgrModule.controller('expCtrl', function($scope, $q, $http, dataSrv, amountCo
 
                 var expenseToUpdate = {
                     'exp_id': lastExpId,
-                    'exp_cat': $scope.defaultExpCat.name,
+                    'exp_cat': $scope.defaultExpCat.exp_cat,
                     'exp_amount': $scope.expAmount,
                     'exp_date': $scope.expDate,
                     'mode': $scope.defaultMode.name,
